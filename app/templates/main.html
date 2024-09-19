@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Home - Learning App</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <style type="text/css">
+            .icon_item {
+                cursor:pointer;
+            }
+            .icon_item:hover {
+                background-color: aliceblue;
+            }
+            .suggestion_result {
+                cursor:pointer;
+            }
+            .suggestion_result:hover {
+                background-color: var(--bs-secondary);
+                color: var(--bs-light);
+            }
+            .selected_suggestion {
+                background-color: var(--bs-primary);
+                color: var(--bs-light);
+            }
+            .selected_suggestion:hover {
+                background-color: var(--bs-primary);
+                color: var(--bs-light);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Top Nav Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+            <div class="container-fluid">
+              <a class="navbar-brand text-light" href="#">OpenFGA Demo App</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                   <!-- <a class="nav-link active text-light" aria-current="page" href="/">Home</a>-->
+                  </li>
+                  
+                </ul>
+              </div>
+              <div class="d-flex">
+                {% if session %}
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-decoration-none text-light" href="#" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{user.get('image')}}" referrerpolicy="no-referrer" class="rounded-circle border-white"
+                        height="32" alt="Avatar" loading="lazy" />
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end text-dark" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="/groups"><i class="bi bi-people"></i> Manage Groups</a></li>  
+                      <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Log Out</a></li>
+                      
+                    </div>
+                  </div>
+                   
+                {% else %}
+                    <a href="/login" role="button" class="btn-success btn"><i class="fs-4 bi-key"></i> Sign In</a>
+                    {% endif %}
+              </div>
+            </div>
+          </nav>
+
+
+          <!-- Sidebar -->
+
+          <div class="container-fluid">
+            <div class="row flex-nowrap">
+                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
+                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                        
+                        <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                            {% if session %}
+                            
+                            <li class="nav-item text-dark mt-3">
+                                <span class="navbar-text small">
+                                MY FOLDER
+                                </span>
+
+                            </li>
+
+                            <li class="nav-item mb-3">
+                                <a href="#" onclick="goToHome();" class="nav-link align-middle px-0 text-dark">
+                                    <i class="fs-4 bi-folder-fill text-warning"></i> <span class="ms-1 d-none d-sm-inline">{{user.home_folder_name}}</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item text-dark">
+                                <span class="navbar-text small">
+                                SHARED WITH ME 
+                                </span> 
+
+                            </li>
+                            <div id="sharedWithMeItems"></div>
+
+                            {% else %}
+                            
+                            <li class="nav-item text-dark">
+                                <span class="navbar-text small">
+                                
+                                </span>
+
+                            </li>
+
+                            {% endif %}
+                            
+                        </ul>
+                        <hr>
+                        
+                    </div>
+                </div>
+                <div class="col py-3">
+
+
+          <!-- Main Workspace -->
+          <div class="container py-5">
+            {% if session %}
+                {% if pwd %}
+                    
+                    <input type="hidden" id="pwd" value="{{pwd.uuid}}">
+                    <div class="p-2 d-flex justify-content-between align-items-center">
+                        <h4 id="folder_name"><i class="fs-4 bi-folder"></i>{{ pwd.name }}</h4>
+                        <div class="btn-group" role="group" aria-label="Tools">
+                            <a href="#" class="text-success btn btn-success text-light" id="createNewFileButton" data-bs-toggle="tooltip" data-bs-placement="top" title="New File"><i class="bi bi-file-plus"></i></a>
+                            
+                            <span data-bs-toggle="modal" data-bs-target="#folderModal" id="createNewFolderButton">
+                            <a href="#" class="text-success btn btn-warning text-light" data-bs-toggle="tooltip" data-bs-placement="top" title="New Folder"><i class="bi bi-folder-plus"></i></a>
+                            </span>
+                            <a href="#" class="text-success btn btn-danger text-light" id="deleteFolderButton" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Folder"><i class="bi bi-trash"></i></a>
+                            <span data-bs-toggle="modal" data-bs-target="#shareModal" id="shareThisFolderButton">
+                            <a href="#" class="text-success btn btn-primary text-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Share Folder"><i class="bi bi-share-fill"></i></a>
+                            </span>
+                        </div> 
+                    </div>
+                    <hr>
+                    <div id="folder_content" class="d-flex flex-wrap"></div>
+                {% else %}
+                    <h2 class="text-danger">Error: Default folder not found</h2>
+                    <pre>{{pretty}}</pre>
+                {% endif %}
+                <hr>
+                
+                
+            {% else %}
+                <div class="container w-100 text-center">
+                    <h2>OpenFGA Demo App</h2><br>
+                    <p>This app uses <a href="https://auth0.com/" target="_blank">Auth0</a> for authentication with a Google account and <a href="https://openfga.dev/" target="_blank">OpenFGA</a> to manage access and sharing authorization.</p>
+                    
+                    <p>Sign in to get started.</p>
+                    
+                    <a type="button" class="mt-3 btn btn-success text-light btn-lg btn-block" href="/login" ><i class="fs-4 bi-key"></i> Sign In</a>
+
+                    
+                </div>
+                <input type="hidden" id="pwd" value="">
+            {% endif %}
+        </div>
+
+        <!-- End Sidebar layout-->
+
+    </div>
+</div>
+</div>
+
+        <!-- UI Modals -->
+
+        <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header bg-light">
+                  <h5 class="modal-title" id="fileModalLabel"><i class="fs-4 bi-file-plus text-success"></i> New File</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="fileNameInput" class="form-label">File Name</label>
+                        <input class="form-control" id="fileNameInput" aria-describedby="fileNameHelp">
+                        <div id="fileNameHelp" class="form-text">Enter a name for your new file</div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="fileContentInput" class="form-label">Content</label>
+                        <textarea class="form-control" rows="20" id="fileContentInput" aria-describedby="fileContentHelp"></textarea>
+                        <div id="fileContentHelp" class="form-text">Create your file, click "Create File" to save</div>
+                      </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" id="createFileButton" class="btn btn-success">Create File</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="folderModal" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header bg-light">
+                  <h5 class="modal-title" id="folderModalLabel"><i class="fs-4 bi-folder-plus text-warning"></i> New Folder</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="folderNameInput" class="form-label">Folder Name</label>
+                        <input class="form-control" id="folderNameInput" aria-describedby="folderNameHelp">
+                        <div id="folderNameHelp" class="form-text">Enter a name for your new folder</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" id="createFolderButton" class="btn btn-success">Create Folder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header bg-light">
+                  <h5 class="modal-title" id="shareModalLabel"><i class="fs-4 bi-share text-primary"></i>  Share Folder</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="shareInput" class="form-label">Share folder with (user email or group name)</label>
+                        <div class="input-group">
+                            <select class="form-select" id="shareType" style="max-width:100px">
+                                <option value="user" selected>User</option>
+                                <option value="group">Group</option>
+                              </select>
+                            <input type="text" class="form-control" id="shareInput">
+                            <button type="button" id="shareFolderConfirm" class="btn btn-info" disabled="disabled">Share Folder</button>
+                        </div>
+                        
+                        <input type="hidden" id="share_uuid">
+                        <div class="d-flex justify-content-end mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="shareWriteAccess">
+                                <label class="form-check-label" for="shareWriteAccess">
+                                Grant Write Access?
+                                </label>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <ul class="list-group" id="shareSuggestions">
+                            
+                          </ul>
+                      </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+         
+
+        <script>
+            var selectedSuggestion;
+            $(document).ready(function(){
+                
+                loadDir();
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+
+                var myModalEl = document.getElementById('shareModal');
+                    myModalEl.addEventListener('shown.bs.modal', function (event) {
+                        console.log("Opened share modal");
+                        $('#shareInput').focus();
+                    });
+                    myModalEl.addEventListener('hidden.bs.modal', function (event) {
+                        deselectSuggestion();
+                        $('#shareInput').val('');
+                        $('#shareSuggestions').html("");
+                    });
+                
+                $('#shareFolderConfirm').click(function(){
+                    console.log("Sharing folder");
+                    var subject_uuid = $('#share_uuid').val();
+                    var type = $('#shareType').val();
+
+                    var folder_uuid = $('#pwd').val();
+                    var allow_write = $('#shareWriteAccess').is(":checked");
+
+                    $.ajax({
+                        url: "/api/share/folder/" + folder_uuid,
+                        method: "POST",
+                        data: { subject_uuid: subject_uuid, subject_type: type, allow_write: allow_write},
+                        success: function(data){
+                            
+                            var ModalEl = document.getElementById('shareModal');
+                            var Modal = bootstrap.Modal.getInstance(ModalEl);
+
+                            Modal.hide();
+                        },
+                        error: function(error) {
+                            console.error("Error sharing folder:", error);
+                        }
+                    });
+
+                });
+                
+                $('#saveFileButton').click(function(){
+                    file_name = $('#editFileNameInput').val();
+                    file_content = $('#editFileContentInput').val();
+                    file_uuid = $('#editFileUUID').val();
+                    console.log("Saving File "+ file_name +" with content: "+ file_content);
+
+                    $.ajax({
+                        url: "/api/save_file/" + file_uuid,
+                        method: "POST",
+                        data: { name: file_name, content: file_content},
+                        success: function(data){
+                            loadDir();
+                            var editFileModalEl = document.getElementById('editFileModal');
+                            var editFileModal = bootstrap.Modal.getInstance(editFileModalEl);
+
+                            editFileModal.hide();
+                        },
+                        error: function(error) {
+                            console.error("Error creating directory:", error);
+                        }
+                    });
+
+                    
+
+                });
+
+                $('#createNewFileButton').click(function(){
+                    file_name = "Untitled"
+                    file_content = "";
+                    console.log("Creating File "+ file_name);
+
+
+                    var pwd = $("#pwd").val();
+                    if (pwd == ""){
+                        return;
+                    }
+                    
+                    console.log("Posting file details to API");
+
+                    $.ajax({
+                        url: "/api/create_file/" + pwd,
+                        method: "POST",
+                        data: { name: file_name, content: file_content},
+                        success: function(data){
+                            console.log("File Created");
+                            window.location.href = "/file/"+data.uuid;
+                        },
+                        error: function(error) {
+                            console.error("Error creating file:", error);
+                        }
+                    });
+
+                    });
+
+                    $('#shareType').on( "change", function() {
+                        var type = $('#shareType').val();
+                        $('#shareSuggestions').html("");
+                        $('#shareInput').val("");
+                        deselectSuggestion();
+
+                        
+
+                    });
+
+                    
+
+                    $('#shareInput').on("keyup", function(){
+                        var type = $('#shareType').val();
+                        var partial = $('#shareInput').val();
+                        deselectSuggestion();
+
+                        $('#shareSuggestions').html("");
+
+                        if (partial.length > 1){
+                            if (type == 'user'){
+                                $.ajax({
+                                    url: "/api/user_autocomplete",
+                                    method: "POST",
+                                    data: { partial: partial},
+                                    success: function(data){
+                                        data.users.forEach(function(user){
+                                            var element = `<li class="list-group-item suggestion_result" onclick="selectSuggestion('${user.uuid}','${user.email}')" id="suggestion_${user.uuid}"><img src="${user.image}" referrerpolicy="no-referrer" class="rounded-circle" width="22"> ${user.name} <small>&lt;${user.email} &gt;</small></li>`;
+                                            $('#shareSuggestions').append(element);
+                                        });
+                                    },
+                                    error: function(error) {
+                                        console.error("Autocomplete Error:", error);
+                                    }
+                                });
+                            }
+                            else if (type == 'group'){
+                                $.ajax({
+                                    url: "/api/group_autocomplete",
+                                    method: "POST",
+                                    data: { partial: partial},
+                                    success: function(data){
+                                        data.groups.forEach(function(group){
+                                            var element = `<li class="list-group-item suggestion_result" onclick="selectSuggestion('${group.uuid}','${group.name}')" id="suggestion_${group.uuid}"><i class="bi bi-people-fill" style="font-size:22px"></i> ${group.name}</li>`;
+                                            $('#shareSuggestions').append(element);
+                                        });
+                                    },
+                                    error: function(error) {
+                                        console.error("Autocomplete Error:", error);
+                                    }
+                                });
+                            }
+                        }
+
+                    });
+                
+
+                $('#createFolderButton').click(function(){
+                    folder_name = $('#folderNameInput').val();
+                    console.log("Creating Folder " +folder_name);
+                    
+
+                    var folderModalEl = document.getElementById('folderModal');
+                    var folderModal = bootstrap.Modal.getInstance(folderModalEl);
+
+                   
+                    folderModal.hide();
+
+                    var pwd = $("#pwd").val();
+                    if (pwd == "") {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "/api/create_folder/" + pwd,
+                        method: "POST",
+                        data: { name: folder_name},
+                        success: function(data){
+                            loadDir();
+                        },
+                        error: function(error) {
+                            console.error("Error creating directory:", error);
+                        }
+                    });
+
+                    });
+
+            });
+
+            function load_folder(uuid, name){
+                $('#pwd').val(uuid);
+                loadDir();
+            }
+
+            function load_file(uuid, name){
+                window.location.href = "/file/"+uuid;
+            }
+
+            function goToHome(){
+                $('#pwd').val('{{ user.home_folder}}');
+                loadDir();
+            }
+
+            function loadDir(){
+                var pwd = $("#pwd").val();
+                if (pwd == "") {
+                    return;
+                }
+
+                $('#createNewFileButton').hide();
+                $('#createNewFolderButton').hide();
+                $('#shareThisFolderButton').hide();
+                $('#deleteFolderButton').hide();
+                $.ajax({
+                    url: "/api/list/" + pwd,
+                    method: "GET",
+                    success: function(data){
+                        $('#folder_name').html('<i class="fs-4 bi-folder"></i> '+ data.folder_name);
+                        can_share = data.can_share;
+                        can_create_file = data.can_create_file;
+                        is_default = data.is_default;
+                        is_owner = data.is_owner;
+                        if (can_create_file){
+                            $('#createNewFileButton').show();
+                            $('#createNewFolderButton').show();
+                        }
+                        if (can_share){
+                            $('#shareThisFolderButton').show();
+                        }
+                        if (!is_default && is_owner){
+                            $('#deleteFolderButton').show();
+                        }
+                        
+
+                        $('#folder_content').html("");
+                        $('#sharedWithMeItems').html("");
+                        data.contents.forEach(function(item){
+                            var icon = item.type === "file" ? "bi-file-text" : "bi-folder-fill";
+                            var element = `
+                                <div class="p-2 d-flex flex-column align-items-center icon_item" onclick="load_${item.type}('${item.uuid}','${item.name}')">
+                                    <i class="bi ${icon}" style="font-size: 4rem;"></i>
+                                    <div class="filename">${item.name}</div>
+                                </div>
+                            `;
+                            $('#folder_content').append(element);
+                        });
+                        data.sidebar.forEach(function(item){
+                            var element = `
+                            <li class="nav-item mb-3">
+                                <a href="#" class="nav-link align-middle px-0 text-dark" onclick="load_folder('${item.uuid}','${item.name}')">
+                                    <i class="fs-4 bi-folder-fill text-warning"></i> <span class="ms-1 d-none d-sm-inline">${item.name}</span>
+                                </a>
+                            </li>
+                            `;
+                            $('#sharedWithMeItems').append(element);
+                        });
+                    },
+                    error: function(error) {
+                        console.error("Error loading directory:", error);
+                    }
+                });
+            }
+
+            function selectSuggestion(item_uuid, name){
+                if (item_uuid == selectedSuggestion){
+                    deselectSuggestion();
+                }
+                else {
+                    var type = $('#shareType').val();
+                    $('#shareInput').val(name);
+                    selectedSuggestion = item_uuid;
+                    $('#share_uuid').val(item_uuid);
+
+                    console.log("Selecting item "+item_uuid);
+
+                    $("#suggestion_"+item_uuid).addClass("selected_suggestion");
+
+                    $('#shareFolderConfirm').prop( "disabled", false );
+                }
+            }
+
+            function deselectSuggestion(){
+                $('#shareFolderConfirm').prop( "disabled", true );
+                $("#suggestion_"+selectedSuggestion).removeClass("selected_suggestion");
+                $('#share_uuid').val("");
+                console.log("Deselecting item "+selectedSuggestion)
+                selectedSuggestion = "";
+            }
+
+            
+        </script>
+
+    </body>
+</html>
