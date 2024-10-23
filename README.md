@@ -1,8 +1,35 @@
 # flask-fga - An example OpenFGA project using Python-Flask
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Join our community](https://img.shields.io/badge/slack-cncf_%23openfga-40abb8.svg?logo=slack)](https://openfga.dev/community)
+[![Twitter](https://img.shields.io/twitter/follow/openfga?color=%23179CF0&logo=twitter&style=flat-square "@openfga on Twitter")](https://twitter.com/openfga)
+
 This project was created as a learning exercise to gain familiarity with [OpenFGA](https://openfga.dev). It provides a basic multi-user environment where users can create folders and text files, create and add users to groups, and share files and folders with other users and groups. This is not a production ready codebase and is intended as a learning aid and starting point to improve and build on.  It provides an example implementation of OpenFGA with Python-Flask and SQLAlchemy.  
 
-## Components
+## Table of Contents
+- [Components](#components)
+  - [Authentication](#authentication)
+  - [Database](#database)
+  - [OpenFGA](#openfga)
+- [Instalation and Setup](#installation-and-setup)
+  - [Install OpenFGA](#install-openfga)
+  - [Set up your Store and Model](#set-up-your-store-and-model)
+    - [Using the Playground](#using-the-playground)
+    - [Using the CLI](#using-the-cli)
+  - [Configure Authentication](#configure-authentication)
+    - [Create an Auth0 Account](#create-an-auth0-account)
+    - [Configure an Application](#configure-an-application)
+      - [Application Type](#application-type)
+      - [Allowed Callback URLs](#allowed-callback-urls)
+      - [Allowed Logout URLs](#allowed-logout-urls)
+      - [Allowed Web Origins](#allowed-web-origins)
+    - [Collect Required Credentials](#collect-required-credentials)
+  - [Create a Python Virtual Environment](#create-a-python-virtual-environment-optional)
+  - [Install Prerequisites](#install-prerequisites)
+    - [Configure Your Application](#configure-your-application)
+  - [Launch the App](#launch-the-app)
+
+# Components
 
 ### Flask
 Flask is a lightweight WSGI web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications. 
@@ -57,15 +84,15 @@ You will use:
 
 This will expose the playground service on port 3001 instead of 3000 to prevent a conflict.
 
-## Set up your OpenFGA Store and Model
+## Set up your Store and Model
 Before you can use this app you will need to create a store in your OpenFGA instance and create the model used by this app. 
 
-### Using the OpenFGA Playground
+### Using the Playground
 By default your OpenFGA instance will allow you to manage your stores and models through a browser using the OpenFGA Playground UI.  The playground can be accessed (when running OpenFGA locally) at `http://localhost:3001/playground`.  In the playground, create a new store.  Then copy the content of `model.fga` into the model view and save it.  
 
 Once you have saved your model you can copy the store id and model id that were created for it.  These can be found in the menu in the top right corner of the page. You will need these when configuring the app.
 
-### Using the OpenFGA CLI
+### Using the CLI
 You can also use the OpenFGA CLI client to connect with your OpenFGA instance and create your store and model.  You can learn more about the OpenFGA CLI [here](https://openfga.dev/docs/getting-started/cli).  If you are running OpenFGA locally it's default configuration will connect with your local instance.  If you are using a remote FGA service you will need to configure the client with your credentials and connection details before you can proceed.
 
 From this project's main directory run
