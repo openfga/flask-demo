@@ -1,0 +1,11 @@
+model
+  schema 1.1
+
+type user
+  relations
+    define owner: [user]
+
+type resource
+  relations
+    define owner: [user]
+    define viewer: owner

@@ -1,0 +1,22 @@
+<!-- templates/index.html -->
+
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h2>Welcome, {{ current_user.username }}</h2>
+
+<h3>Create a Resource</h3>
+<form method="POST" action="{{ url_for('main.create_resource') }}">
+    <input type="text" name="name" placeholder="Resource Name" required>
+    <button type="submit">Create</button>
+</form>
+
+<h3>Your Resources</h3>
+<ul>
+    {% for resource in resources %}
+        <li><a href="{{ url_for('main.resource', resource_uuid=resource.uuid) }}">{{ resource.name }}</a></li>
+    {% else %}
+        <li>No resources available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
