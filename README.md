@@ -6,6 +6,8 @@
 
 This project was created as a learning exercise to gain familiarity with [OpenFGA](https://openfga.dev). It provides a basic multi-user environment where users can create folders and text files, create and add users to groups, and share files and folders with other users and groups. This is not a production ready codebase and is intended as a learning aid and starting point to improve and build on.  It provides an example implementation of OpenFGA with Python-Flask and SQLAlchemy.  
 
+![Demo App](https://github.com/openfga/flask-demo/blob/main/images/demo_app.png?raw=true)
+
 ## Table of Contents
 - [Components](#components)
   - [Authentication](#authentication)
