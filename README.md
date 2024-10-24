@@ -80,7 +80,7 @@ Instead of:
 `docker run -p 8080:8080 -p 8081:8081 -p 3000:3000 openfga/openfga run`
 
 You will use:
-`docker run -p 8080:8080 -p 8081:8081 -p 3000:3001 openfga/openfga run`
+`docker run -p 8080:8080 -p 8081:8081 -p 3001:3000 openfga/openfga run`
 
 This will expose the playground service on port 3001 instead of 3000 to prevent a conflict.
 
