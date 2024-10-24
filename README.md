@@ -188,3 +188,5 @@ FGA_MODEL_ID=<The Model ID from the model you created in OpenFGA>
 Now that everything is set up you can launch your app.  From the main directory of the app run `python3 run.py`
 
 You can now access your app at `http://localhost:3000/` and log in either with a Google account or with a user and password combination you created in the Auth0 dashboard.
+
+![Demo App - Share](https://github.com/openfga/flask-demo/blob/main/images/demo_app_2.png?raw=true)
