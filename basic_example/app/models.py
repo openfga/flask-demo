@@ -1,14 +1,14 @@
 # app/models.py
 
 from . import db, login_manager
-from flask_login import UserMixin
 import uuid
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    
 
 class Resource(db.Model):
     id = db.Column(db.Integer, primary_key=True)
