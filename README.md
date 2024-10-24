@@ -76,7 +76,7 @@ Due to limitations using SQLAlchemy in asynchronous functions this app uses Open
 If you are using an existing OpenFGA server instance or SaaS service you can skip this step.  Using Docker locally is recommended as the simplest self-hosted option to get started with this project.  Follow the instructions found in [this guide](https://openfga.dev/docs/getting-started/setup-openfga/docker) to run OpenFGA in Docker. 
 
 ### Note
-Because the OpenFGA Playground uses the same default port as Python-Flask you will need to modify the docker run command provided in the documentation
+Because the OpenFGA Playground uses the same default port as Python-Flask you will need to modify the docker run command provided in the documentation.  Instead of exposing the Playground on port 3000 we will instead use port 3001.
 
 Instead of:
 `docker run -p 8080:8080 -p 8081:8081 -p 3000:3000 openfga/openfga run`
