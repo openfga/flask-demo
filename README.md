@@ -62,7 +62,7 @@ This project uses the Flask SQLAlchemy library to simplify interactions with the
 
 ## OpenFGA 
 
-This project was created as an example of the capabilities of OpenFGA you can learn more about OpenFGA here.
+This project was created as an example of the capabilities of OpenFGA [you can learn more about OpenFGA here](https://openfga.dev).
 
 ### Synchronous Mode
 
