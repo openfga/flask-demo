@@ -14,11 +14,11 @@ repository:
   accepts-automated-change-request: true
   no-third-party-packages: false
   core-team:
-  - name: Evan Sims
-    affiliation: Okta
-    email: evan.sims@okta.com
-    social: https://github.com/evansims
-    primary: true
+    - name: Evan Sims
+      affiliation: Okta
+      email: evan.sims@okta.com
+      social: https://github.com/evansims
+      primary: true
 
   license:
     url: https://raw.githubusercontent.com/openfga/flask-demo/main/LICENSE
